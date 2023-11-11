@@ -19,9 +19,8 @@ class Detector(QWidget):
         self.btn = QPushButton('Выбрать фото', self)
         self.btn.move(20, 500)
         self.btn.clicked.connect(self.load_image)
-        self.pic = QLabel('Изображение:', self)
+        self.pic = QLabel('Имя:', self)
         self.pic.move(10, 30)
-        self.pic.setMaximumSize(200, 200)
         self.pic.show()
         self.opp_img = QLabel(self)
         self.opp_img.move(250, 30)
@@ -34,8 +33,6 @@ class Detector(QWidget):
         self.database = FaceTable('faces.db')
         self.detector = FaceDetector()
         self.scan_but.setEnabled(False)
-        self.layout = QVBoxLayout(self)
-        self.layout.addWidget(self.pic)
 
     def load_image(self):
         file_name = QFileDialog.getOpenFileName()
@@ -60,8 +57,10 @@ class Detector(QWidget):
                 self.pers = i
                 break
         print(str(self.pers[2]))
+        self.database.set_date(self.pers[0])
         self.opp_img.setText(self.pers[2])
         self.opp_img.adjustSize()
+        self.scan_but.setEnabled(False)
 
 
 class Database_window(QWidget):
@@ -72,9 +71,9 @@ class Database_window(QWidget):
     def initUI(self):
         self.setGeometry(0, 0, 600, 600)
         self.setWindowTitle('База данных')
-        self.database = QtSql.QSqlDatabase('faces.db')
+        self.database = QtSql.QSqlDatabase.addDatabase('humans')
+        self.database.setDatabaseName('faces.db')
         self.database.open()
-        self.db = QtSql.QSqlDatabase.addDatabase('faces.db')
 
 
 if __name__ == '__main__':
